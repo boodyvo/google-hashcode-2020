@@ -1,0 +1,6 @@
+.idea/
+code/*.out
+deploy
+deploy/ansible/GoogleHashCode.pem
+deploy/terraform/credentials
+deploy/terraform/.terraform
