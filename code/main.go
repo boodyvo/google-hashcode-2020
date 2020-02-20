@@ -41,53 +41,60 @@ func readInput(scanf func(f string, a ...interface{})) (int, int, int, []int, []
 }
 
 func main() {
-	name := "c_incunabula"
-	//name := "e_so_many_books"
-	//name := "f_libraries_of_the_world"
-	fileName := fmt.Sprintf("%s.txt", name)
-	fileNameOut := fmt.Sprintf("%s.out", name)
-	//var fileName = flag.String("in", "e_so_many_books.txt", "help message for flagname")
-	//var fileNameOut = flag.String("out", "e_so_many_books.out", "help message for flagname")
-	//var fileName = flag.String("in", "f_libraries_of_the_world.txt", "help message for flagname")
-	//var fileNameOut = flag.String("out", "f_libraries_of_the_world.out", "help message for flagname")
-	flag.Parse()
+	//names := []string{"b_read_on", "c_incunabula", "d_tough_choices", "e_so_many_books", "f_libraries_of_the_world"}
+	//names := []string{"e_so_many_books", "f_libraries_of_the_world"}
+	names := []string{"d_tough_choices"}
+	for _, name := range names {
+		//name := "b_read_on"
+		//name := "c_incunabula"
+		//name := "d_tough_choices"
+		//name := "e_so_many_books"
+		//name := "f_libraries_of_the_world"
+		fileName := fmt.Sprintf("%s.txt", name)
+		fileNameOut := fmt.Sprintf("%s.out", name)
+		//var fileName = flag.String("in", "e_so_many_books.txt", "help message for flagname")
+		//var fileNameOut = flag.String("out", "e_so_many_books.out", "help message for flagname")
+		//var fileName = flag.String("in", "f_libraries_of_the_world.txt", "help message for flagname")
+		//var fileNameOut = flag.String("out", "f_libraries_of_the_world.out", "help message for flagname")
+		flag.Parse()
 
-	fmt.Println(fileName)
-	fmt.Println(fileNameOut)
+		fmt.Println(fileName)
+		fmt.Println(fileNameOut)
 
-	//fileName := "e_also_big.in"
-	file, err := os.Open(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	//fileNameOut := "e_also_big.out"
-	fileOut, err := os.Create(fileNameOut)
-	if err != nil {
-		fileOut, err = os.Open(fileNameOut)
+		//fileName := "e_also_big.in"
+		file, err := os.Open(fileName)
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer file.Close()
+
+		//fileNameOut := "e_also_big.out"
+		fileOut, err := os.Create(fileNameOut)
+		if err != nil {
+			fileOut, err = os.Open(fileNameOut)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		defer fileOut.Close()
+
+		reader := bufio.NewReader(file)
+		writer := bufio.NewWriter(fileOut)
+		scanf := func(f string, a ...interface{}) { _, _ = fmt.Fscanf(reader, f, a...) }
+		printf := func(f string, a ...interface{}) { _, _ = fmt.Fprintf(writer, f, a...) }
+
+		defer writer.Flush()
+
+		results = 0
+		B, L, D, scores, libraries := readInput(scanf)
+		if err != nil {
+			log.Fatal("Cannot read file")
+
+			return
+		}
+
+		fmt.Println("start computing ...")
+		comp.Computing(B, L, D, scores, libraries, printf)
 	}
-
-	defer fileOut.Close()
-
-	reader := bufio.NewReader(file)
-	writer := bufio.NewWriter(fileOut)
-	scanf := func(f string, a ...interface{}) { _, _ = fmt.Fscanf(reader, f, a...) }
-	printf := func(f string, a ...interface{}) { _, _ = fmt.Fprintf(writer, f, a...) }
-
-	defer writer.Flush()
-
-	results = 0
-	B, L, D, scores, libraries := readInput(scanf)
-	if err != nil {
-		log.Fatal("Cannot read file")
-
-		return
-	}
-
-	fmt.Println("start computing ...")
-	comp.Computing(B, L, D, scores, libraries, printf)
 }
