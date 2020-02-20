@@ -41,24 +41,31 @@ func readInput(scanf func(f string, a ...interface{})) (int, int, int, []int, []
 }
 
 func main() {
-	var fileName = flag.String("in", "b_read_on.txt", "help message for flagname")
-	var fileNameOut = flag.String("out", "b_read_on.out", "help message for flagname")
+	name := "c_incunabula"
+	//name := "e_so_many_books"
+	//name := "f_libraries_of_the_world"
+	fileName := fmt.Sprintf("%s.txt", name)
+	fileNameOut := fmt.Sprintf("%s.out", name)
+	//var fileName = flag.String("in", "e_so_many_books.txt", "help message for flagname")
+	//var fileNameOut = flag.String("out", "e_so_many_books.out", "help message for flagname")
+	//var fileName = flag.String("in", "f_libraries_of_the_world.txt", "help message for flagname")
+	//var fileNameOut = flag.String("out", "f_libraries_of_the_world.out", "help message for flagname")
 	flag.Parse()
 
-	fmt.Println(*fileName)
-	fmt.Println(*fileNameOut)
+	fmt.Println(fileName)
+	fmt.Println(fileNameOut)
 
 	//fileName := "e_also_big.in"
-	file, err := os.Open(*fileName)
+	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
 	//fileNameOut := "e_also_big.out"
-	fileOut, err := os.Create(*fileNameOut)
+	fileOut, err := os.Create(fileNameOut)
 	if err != nil {
-		fileOut, err = os.Open(*fileNameOut)
+		fileOut, err = os.Open(fileNameOut)
 		if err != nil {
 			log.Fatal(err)
 		}
