@@ -10,28 +10,39 @@ import (
 	comp "./computing"
 )
 
-
-
 var results int64
 
 func setResults(result int64) {
 	results = result
 }
 
-func readInput(scanf func(f string, a ...interface{})) (int, int, []int, error) {
-	var n, m int
-	scanf("%d %d\n", &m, &n)
-	arr := make([]int, n)
-	for i := 0; i < n; i++ {
-		scanf("%d", &arr[i])
+func readInput(scanf func(f string, a ...interface{})) (int, int, int, []int, []*comp.Library) {
+	var B, L, D int
+	scanf("%d %d %d\n", &B, &L, &D)
+	scores := make([]int, B)
+	for i := 0; i < B; i++ {
+		scanf("%d", &scores[i])
+	}
+	scanf("\n")
+	libraries := make([]*comp.Library, L)
+	for i := 0; i < L; i++ {
+		libraries[i] = &comp.Library{
+			Id: i,
+		}
+		scanf("%d %d %d\n", &libraries[i].N, &libraries[i].T, &libraries[i].M)
+		libraries[i].Books = make([]int, libraries[i].N)
+		for j := 0; j < libraries[i].N; j++ {
+			scanf("%d", &libraries[i].Books[j])
+		}
+		scanf("\n")
 	}
 
-	return n, m, arr, nil
+	return B, L, D, scores, libraries
 }
 
 func main() {
-	var fileName = flag.String("in", "a_example.in", "help message for flagname")
-	var fileNameOut = flag.String("out", "a_example.out", "help message for flagname")
+	var fileName = flag.String("in", "b_read_on.txt", "help message for flagname")
+	var fileNameOut = flag.String("out", "b_read_on.out", "help message for flagname")
 	flag.Parse()
 
 	fmt.Println(*fileName)
@@ -63,7 +74,7 @@ func main() {
 	defer writer.Flush()
 
 	results = 0
-	n, m, types, err := readInput(scanf)
+	B, L, D, scores, libraries := readInput(scanf)
 	if err != nil {
 		log.Fatal("Cannot read file")
 
@@ -71,5 +82,5 @@ func main() {
 	}
 
 	fmt.Println("start computing ...")
-	comp.Computing(m, n, types, printf)
+	comp.Computing(B, L, D, scores, libraries, printf)
 }

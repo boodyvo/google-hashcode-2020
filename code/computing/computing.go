@@ -2,100 +2,49 @@ package computing
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
+	"sort"
 )
 
-func increase(m, n int, types *[]int, used *[]bool, curResult *int) {
-	for i := rand.Intn(n); i >= 0; i-- {
-		if !(*used)[i] {
-			(*used)[i] = true
-			*curResult += (*types)[i]
+type ByDays []*Library
 
-			return
-		}
-	}
-}
+func (a ByDays) Len() int           { return len(a) }
+func (a ByDays) Less(i, j int) bool { return a[i].T < a[j].T }
+func (a ByDays) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
-func decrease(m, n int, types *[]int, used *[]bool, curResult *int) {
-	tmp := rand.Intn(n)
-	for i := tmp; i < n; i++ {
-		if (*used)[i] {
-			(*used)[i] = false
-			*curResult -= (*types)[i]
-
-			return
-		}
+func Computing(B, L, D int, scores []int, libraries []*Library, printf func(f string, a ...interface{})) {
+	sort.Sort(ByDays(libraries))
+	for i := 0; i < L; i++ {
+		fmt.Println(libraries[i].Id, libraries[i].T, libraries[i].M)
 	}
 
-	for i := tmp - 1; i >= 0; i-- {
-		if (*used)[i] {
-			(*used)[i] = false
-			*curResult -= (*types)[i]
+	booksRes := make([]int, 0, B)
+	librariesRes := make([]LibraryRes, 0)
+	curT := 0
+	for i := 0; i < L && curT < D; i++ {
+		curT += libraries[i].T
+		librariesRes = append(librariesRes, LibraryRes{
+			Id: libraries[i].Id,
+		})
+		daysLeft := D - curT
 
-			return
+		if daysLeft <= 0 {
+			break
 		}
+
+		librariesRes[i].Books = libraries[i].Books[:daysLeft]
+		booksRes = append(booksRes, librariesRes[i].Books...)
 	}
-}
 
-func Computing(m, n int, types []int, printf func(f string, a ...interface{})) {
-	fmt.Println(m, n)
-	fmt.Println(types)
-	rand.Seed(time.Now().UnixNano())
-	best := 0
-	usd := make([]bool, n)
-
-LOOP:
-	for it := 0; it < 100; it++ {
-		used := make([]bool, n)
-		curResult := 0
-		for count := 0; count < 10000; count++ {
-			if curResult == m {
-				fmt.Println(curResult)
-				fmt.Println(used)
-
-				break LOOP
-			}
-
-			if curResult > m {
-				decrease(m, n, &types, &used, &curResult)
+	printf("%d\n", len(librariesRes))
+	for _, libr := range librariesRes {
+		printf("%d %d\n", libr.Id, len(libr.Books))
+		for j := 0; j < len(libr.Books); j++ {
+			printf("%d", libr.Books[j])
+			if j == len(libr.Books) - 1 {
+				printf("\n")
 			} else {
-				increase(m, n, &types, &used, &curResult)
-			}
-
-			if best < curResult && curResult < m {
-				best = curResult
-				copy(usd, used)
+				printf(" ")
 			}
 		}
-
-		if best < curResult && curResult < m {
-			best = curResult
-			copy(usd, used)
-		}
 	}
-
-	fmt.Println(best)
-	fmt.Println(usd)
-	res := make([]int, 0, n)
-	checker := 0
-	for i := 0; i < n; i++ {
-		if usd[i] {
-			checker += types[i]
-			res = append(res, i)
-		}
-	}
-	fmt.Println(checker)
-
-	ans := len(res)
-	printf("%d\n", ans)
-	for i := 0; i < ans; i++ {
-		if i != ans - 1 {
-			printf("%d ", res[i])
-		} else {
-			printf("%d\n", res[i])
-		}
-	}
-
-	return
 }

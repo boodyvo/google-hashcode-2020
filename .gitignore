@@ -2,5 +2,6 @@
 code/*.out
 deploy
 deploy/ansible/GoogleHashCode.pem
+deploy/ansible/results
 deploy/terraform/credentials
 deploy/terraform/.terraform
